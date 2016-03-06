@@ -58,18 +58,15 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         audioRecorder.record()
     }
     
-    // The following function is called when the recording is finished.
-    // Just like the ones in the view controller (lifecycle events)
+    // The following function is called when the recording is finished just like the ones in the view controller (lifecycle events)
     
     func audioRecorderDidFinishRecording(recorder: AVAudioRecorder, successfully flag: Bool) {
         
         if (flag){
-            // Step 1: Save recorded audio
-            recordedAudio = RecordedAudio()
-            recordedAudio.filePathURL = recorder.url
-            recordedAudio.title = recorder.url.lastPathComponent
+            // Save recorded audio
+            recordedAudio = RecordedAudio(filePathURL: recorder.url, title: recorder.url.lastPathComponent)
             
-            // Step 2: Move to next scene (performSegueWithIdentifier)
+            // Move to next scene with performSegueWithIdentifier rather than the hard-coded style in StoryBoard
             self.performSegueWithIdentifier("stopRecording", sender: recordedAudio)
         } else {
             print("Recording has not successfully completed.")
