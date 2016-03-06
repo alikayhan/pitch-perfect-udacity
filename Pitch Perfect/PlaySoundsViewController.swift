@@ -27,7 +27,7 @@ class PlaySoundsViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
-    func playSound (rate rate: Float = 1.0, pitch: Float = 1.0) {
+    func playSound (rate rate: Float = 1.0, pitch: Float = 1.0, delayTime: Float = 0.0, wetDryMix: Float = 0) {
         
         audioEngine.stop()
         audioEngine.reset()
@@ -40,8 +40,18 @@ class PlaySoundsViewController: UIViewController {
         soundEffect.rate = rate
         audioEngine.attachNode(soundEffect)
         
+        let echoEffect = AVAudioUnitDelay()
+        echoEffect.delayTime = NSTimeInterval(delayTime)
+        audioEngine.attachNode(echoEffect)
+        
+        let reverbEffect = AVAudioUnitReverb()
+        reverbEffect.wetDryMix = wetDryMix
+        audioEngine.attachNode(reverbEffect)
+        
         audioEngine.connect(audioPlayerNode, to: soundEffect, format: nil)
-        audioEngine.connect(soundEffect, to: audioEngine.outputNode, format: nil)
+        audioEngine.connect(soundEffect, to: echoEffect, format: nil)
+        audioEngine.connect(echoEffect, to: reverbEffect, format: nil)
+        audioEngine.connect(reverbEffect, to: audioEngine.outputNode, format: nil)
         
         audioPlayerNode.scheduleFile(audioFile, atTime: nil, completionHandler: nil)
         
@@ -68,9 +78,20 @@ class PlaySoundsViewController: UIViewController {
     
     @IBAction func playDarthVaderAudio(sender: UIButton) {
         playSound(pitch: -1000.00)
-    }    
+    }
+    
+    @IBAction func playEchoAudio(sender: UIButton) {
+        playSound(delayTime: 1.0)
+    }
+    
+    @IBAction func playReverbAudio(sender: UIButton) {
+        playSound(wetDryMix: 60)
+    }
+    
     
     @IBAction func stopPlaying(sender: UIButton) {
+        audioEngine.stop()
+        audioEngine.reset()
         audioPlayerNode.stop()
     }
 
