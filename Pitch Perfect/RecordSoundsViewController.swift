@@ -16,36 +16,40 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     
     @IBOutlet weak var stopButton: UIButton!
     @IBOutlet weak var recordButton: UIButton!
+    @IBOutlet weak var recordingLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
-    override func viewWillAppear(animated: Bool) {
-        stopButton.hidden = true
+    func setupReadyToRecordView() {
+        recordButton.enabled = true
         recordingLabel.text = "Tap to Record"
+        stopButton.hidden = true
     }
-
-    @IBAction func recordAudio(sender: UIButton) {
-        //TODO: Record user's voice
-        print("Recording has started")
+    
+    func setupRecordingNowView() {
         recordButton.enabled = false
         recordingLabel.text = "Recording..."
         stopButton.hidden = false
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        setupReadyToRecordView()
+    }
+
+    @IBAction func recordAudio(sender: UIButton) {
+        setupRecordingNowView()
         
         let dirPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] as String
         
-        // Since browsing the recorded audio files and deleting them is not possible yet, recording name is always the same and recorded audio is overwritten for each time the user records the voice.
         let recordingName = "your_recorded_audio.wav"
         let pathArray = [dirPath, recordingName]
         let filePath = NSURL.fileURLWithPathComponents(pathArray)
-        print(filePath)
         
         // Setup audio session
         let session = AVAudioSession.sharedInstance()
@@ -59,22 +63,25 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         audioRecorder.record()
     }
     
-    // The following function is called when the recording is finished just like the ones in the view controller (lifecycle events)
+    @IBAction func stopRecording(sender: UIButton) {
+        audioRecorder.stop()
+        
+        // Deactivate audio session
+        let audioSession = AVAudioSession.sharedInstance()
+        try! audioSession.setActive(false)
+    }
     
     func audioRecorderDidFinishRecording(recorder: AVAudioRecorder, successfully flag: Bool) {
-        
-        if (flag){
+        if (flag) {
             // Save recorded audio
             recordedAudio = RecordedAudio(filePathURL: recorder.url, title: recorder.url.lastPathComponent)
             
-            // Move to next scene with performSegueWithIdentifier rather than the hard-coded style in StoryBoard
+            // Move to next scene
             self.performSegueWithIdentifier("stopRecording", sender: recordedAudio)
         } else {
             print("Recording has not successfully completed.")
-            recordButton.hidden = false
-            recordingLabel.text = "Tap to Record"
+            setupReadyToRecordView()
         }
-    
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -86,19 +93,5 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
             playSoundsVC.receivedAudio = data
         }
     }
-
-    @IBOutlet weak var recordingLabel: UILabel!
-    
-    @IBAction func stopRecording(sender: UIButton) {
-        
-        print("Recording has stopped")
-        stopButton.hidden = true
-        recordButton.enabled = true
-        audioRecorder.stop()
-        
-        let audioSession = AVAudioSession.sharedInstance()
-        try! audioSession.setActive(false)
-    }
     
 }
-

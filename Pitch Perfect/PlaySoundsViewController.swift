@@ -25,7 +25,6 @@ class PlaySoundsViewController: UIViewController {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     func playSound (rate rate: Float = 1.0, pitch: Float = 1.0) {
@@ -48,7 +47,6 @@ class PlaySoundsViewController: UIViewController {
         
         do {
             try audioEngine.start()
-            print("Audio engine has started")
         } catch {
             print("Audio engine could not start")
         }
