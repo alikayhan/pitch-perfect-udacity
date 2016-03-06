@@ -29,13 +29,14 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     
     override func viewWillAppear(animated: Bool) {
         stopButton.hidden = true
+        recordingLabel.text = "Tap to Record"
     }
 
     @IBAction func recordAudio(sender: UIButton) {
         //TODO: Record user's voice
         print("Recording has started")
         recordButton.enabled = false
-        recordingLabel.hidden = false
+        recordingLabel.text = "Recording..."
         stopButton.hidden = false
         
         let dirPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] as String
@@ -71,7 +72,7 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         } else {
             print("Recording has not successfully completed.")
             recordButton.hidden = false
-            recordingLabel.hidden = false
+            recordingLabel.text = "Tap to Record"
         }
     
     }
@@ -91,7 +92,6 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     @IBAction func stopRecording(sender: UIButton) {
         
         print("Recording has stopped")
-        recordingLabel.hidden = true
         stopButton.hidden = true
         recordButton.enabled = true
         audioRecorder.stop()
