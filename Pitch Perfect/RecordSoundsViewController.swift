@@ -92,6 +92,7 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     @IBOutlet weak var recordingLabel: UILabel!
     
     @IBAction func stopRecording(sender: UIButton) {
+        
         print("Recording has stopped")
         recordingLabel.hidden = true
         stopButton.hidden = true
