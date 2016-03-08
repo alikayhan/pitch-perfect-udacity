@@ -29,8 +29,7 @@ class PlaySoundsViewController: UIViewController {
     
     func playSound (rate rate: Float = 1.0, pitch: Float = 1.0, delayTime: Float = 0.0, wetDryMix: Float = 0) {
         
-        audioEngine.stop()
-        audioEngine.reset()
+        stopAudioEngine()
         
         audioPlayerNode = AVAudioPlayerNode()
         audioEngine.attachNode(audioPlayerNode)
@@ -64,6 +63,11 @@ class PlaySoundsViewController: UIViewController {
         audioPlayerNode.play()
     }
     
+    func stopAudioEngine() {
+        audioEngine.stop()
+        audioEngine.reset()
+    }
+    
     @IBAction func playSoundSlow(sender: UIButton) {
         playSound(rate: 0.5)
     }
@@ -88,10 +92,8 @@ class PlaySoundsViewController: UIViewController {
         playSound(wetDryMix: 60)
     }
     
-    
     @IBAction func stopPlaying(sender: UIButton) {
-        audioEngine.stop()
-        audioEngine.reset()
+        stopAudioEngine()
         audioPlayerNode.stop()
     }
 
